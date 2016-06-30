@@ -10,8 +10,11 @@
  */
 
 using Oddmatics.Util.IO;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Oddmatics.RozWorld.Formats
 {
@@ -57,7 +60,15 @@ namespace Oddmatics.RozWorld.Formats
         /// <param name="filename">The filename of the account to load.</param>
         public AccountFile(string filename)
         {
-            // Load here
+            var data = new List<byte>(FileSystem.GetBinaryFile(filename));
+            int currentIndex = 0;
+
+            Username = ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8);
+            DisplayName = ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8);
+            PasswordHash = data.GetRange(currentIndex, 32).ToArray();
+            currentIndex += 32;
+            CreationIP = IPAddress.Parse(ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8));
+            LastLogInIP = IPAddress.Parse(ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8));
         }
 
         /// <summary>

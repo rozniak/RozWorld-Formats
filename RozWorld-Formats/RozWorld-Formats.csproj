@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Oddmatics.RozWorld.Formats</RootNamespace>
-    <AssemblyName>RozWorld-Formats</AssemblyName>
+    <AssemblyName>Oddmatics.RozWorld.Formats</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\RozWorld-Formats.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Oddmatics.RozWorld.Formats.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\RozWorld-Formats.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Oddmatics.RozWorld.Formats.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Oddmatics-IO">

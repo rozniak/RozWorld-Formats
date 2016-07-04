@@ -20,9 +20,24 @@ namespace Oddmatics.RozWorld.Formats
 {
     /// <summary>
     /// Represents a RozWorld user account file.
+    /// 
+    /// The format for account files is:
+    /// [1 BYTE] Username length
+    /// [+ BYTES] Username (UTF8 encoded)
+    /// [1 BYTE] Display name length
+    /// [+ BYTES] Display name (UTF8 encoded)
+    /// [32 BYTES] Password hash (should be SHA-256'd)
+    /// [4 BYTES] Creation IPAddress
+    /// [4 BYTES] Last login IPAddress
+    /// [8 BYTES] Creation DateTime in ticks.
     /// </summary>
     public class AccountFile
     {
+        /// <summary>
+        /// Gets the creation date of this account.
+        /// </summary>
+        public DateTime CreationDate { get; private set; }
+
         /// <summary>
         /// Gets the IPAddress that created this account.
         /// </summary>
@@ -67,23 +82,70 @@ namespace Oddmatics.RozWorld.Formats
             DisplayName = ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8);
             PasswordHash = data.GetRange(currentIndex, 32).ToArray();
             currentIndex += 32;
-            CreationIP = IPAddress.Parse(ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8));
-            LastLogInIP = IPAddress.Parse(ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8));
+            CreationIP = ByteParse.NextIPv4Address(data, ref currentIndex);
+            LastLogInIP = ByteParse.NextIPv4Address(data, ref currentIndex);
+            CreationDate = new DateTime(ByteParse.NextLong(data, ref currentIndex));
+
+            Source = filename;
         }
 
+
         /// <summary>
-        /// Initialises a new instance of the AccountFile class with a username, password hash and creation IPAddress.
+        /// Creates a new AccountFile instance and data on disk with the specified username, password hash and creation IPAddress.
         /// </summary>
-        /// <param name="username">The username to set for this account.</param>
-        /// <param name="passwordHash">The password to set for this account.</param>
-        /// <param name="creationIP">The creation IP of this account.</param>
-        public AccountFile(string username, byte[] passwordHash, IPAddress creationIP)
+        /// <param name="username">The username to use for this account.</param>
+        /// <param name="passwordHash">The password hash to use for this account.</param>
+        /// <param name="creationIP">The creator's IPAddress to use for this account.</param>
+        /// <param name="directory">The directory path to save in.</param>
+        /// <returns>The newly created file as an AccountFile instance if it was successful, null otherwise.</returns>
+        public static AccountFile Create(string username, byte[] passwordHash, IPAddress creationIP, string directory)
         {
-            CreationIP = creationIP;
-            DisplayName = username;
-            LastLogInIP = creationIP;
-            PasswordHash = passwordHash;
-            Username = username;
+            byte[] creatorAddressBytes = creationIP.GetAddressBytes();
+            AccountFile createdFile = null;
+            var data = new List<byte>();
+            string realName = username.ToLower();
+
+            try
+            {
+                if (Directory.GetFiles(directory, realName + ".*.acc").Length == 0)
+                {
+                    const byte maxAttempts = 4;
+                    byte attempts = 0;
+                    string finalDisplayName = String.Empty;
+                    string savePath = String.Empty;
+                    string underscores = String.Empty;
+
+                    while (Directory.GetFiles(directory, "*." + realName + underscores + ".acc")
+                        .Length > 0)
+                    {
+                        if (++attempts > maxAttempts ||
+                            (realName + underscores).Length > 255)
+                            return null;
+
+                        underscores += "_";
+                    }
+
+                    finalDisplayName = username + underscores;
+                    savePath = directory + "\\" + realName + "." + realName +
+                        underscores + ".acc";
+
+                    var fileData = new List<byte>();
+
+                    fileData.AddRange(username.GetBytesByLength(1, Encoding.UTF8));
+                    fileData.AddRange(finalDisplayName.GetBytesByLength(1, Encoding.UTF8));
+                    fileData.AddRange(passwordHash);
+                    fileData.AddRange(creatorAddressBytes);
+                    fileData.AddRange(creatorAddressBytes); // Creator is also last-login initially
+                    fileData.AddRange(DateTime.Now.Ticks.GetBytes());
+
+                    FileSystem.PutBinaryFile(savePath, fileData.ToArray());
+
+                    createdFile = new AccountFile(savePath);
+                }
+            }
+            catch { }
+
+            return createdFile;
         }
     }
 }

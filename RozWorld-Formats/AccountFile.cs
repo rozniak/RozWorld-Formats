@@ -44,19 +44,29 @@ namespace Oddmatics.RozWorld.Formats
         public IPAddress CreationIP { get; private set; }
 
         /// <summary>
-        /// Gets the display name of this account.
+        /// The display name of this account.
         /// </summary>
-        public string DisplayName { get; private set; }
+        private string DisplayName;
 
         /// <summary>
         /// Gets the last logged in IPAddress of this account.
         /// </summary>
-        public IPAddress LastLogInIP { get; private set; }
+        public IPAddress LastLogInIP
+        {
+            get { return _LastLogInIP; }
+            set { _LastLogInIP = value; Save(); }
+        }
+        private IPAddress _LastLogInIP;
 
+        private byte[] _PasswordHash;
         /// <summary>
         /// Gets the password hash of this account.
         /// </summary>
-        public byte[] PasswordHash { get; private set; }
+        public byte[] PasswordHash
+        {
+            get { return _PasswordHash; }
+            set { if (value.Length == 32) _PasswordHash = value; Save(); }
+        }
 
         /// <summary>
         /// Gets the source filename of this account.
@@ -83,7 +93,7 @@ namespace Oddmatics.RozWorld.Formats
             PasswordHash = data.GetRange(currentIndex, 32).ToArray();
             currentIndex += 32;
             CreationIP = ByteParse.NextIPv4Address(data, ref currentIndex);
-            LastLogInIP = ByteParse.NextIPv4Address(data, ref currentIndex);
+            _LastLogInIP = ByteParse.NextIPv4Address(data, ref currentIndex);
             CreationDate = new DateTime(ByteParse.NextLong(data, ref currentIndex));
 
             Source = filename;
@@ -146,6 +156,59 @@ namespace Oddmatics.RozWorld.Formats
             catch { }
 
             return createdFile;
+        }
+
+
+        /// <summary>
+        /// Gets the display name safely.
+        /// </summary>
+        /// <returns>The display name of this account.</returns>
+        public string GetDisplayName()
+        {
+            return DisplayName;
+        }
+
+        /// <summary>
+        /// Updates the on-disk file of this AccountFile.
+        /// </summary>
+        private void Save()
+        {
+            var fileData = new List<byte>();
+
+            fileData.AddRange(Username.GetBytesByLength(1, Encoding.UTF8));
+            fileData.AddRange(DisplayName.GetBytesByLength(1, Encoding.UTF8));
+            fileData.AddRange(PasswordHash);
+            fileData.AddRange(CreationIP.GetAddressBytes());
+            fileData.AddRange(LastLogInIP.GetAddressBytes()); // Creator is also last-login initially
+            fileData.AddRange(DateTime.Now.Ticks.GetBytes());
+
+            FileSystem.PutBinaryFile(Source, fileData.ToArray());
+        }
+
+        /// <summary>
+        /// Sets the display name safely.
+        /// </summary>
+        /// <param name="name">The new display name.</param>
+        /// <returns>True if the display name was set.</returns>
+        public bool SetDisplayName(string name)
+        {
+            // Check the new display name is available
+            string directory = Path.GetDirectoryName(Source);
+
+            if (Directory.GetFiles(directory, "*." + name.ToLower() + ".acc").Length == 0)
+            {
+                // Name available - delete old file
+                if (File.Exists(Source))
+                    File.Delete(Source);
+
+                DisplayName = name;
+                Source = directory + "\\" + Username.ToLower() + "." + DisplayName.ToLower() + ".acc";
+                Save(); // Update the file
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

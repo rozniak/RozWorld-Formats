@@ -58,7 +58,6 @@ namespace Oddmatics.RozWorld.Formats
         }
         private IPAddress _LastLogInIP;
 
-        private byte[] _PasswordHash;
         /// <summary>
         /// Gets the password hash of this account.
         /// </summary>
@@ -67,6 +66,7 @@ namespace Oddmatics.RozWorld.Formats
             get { return _PasswordHash; }
             set { if (value.Length == 32) _PasswordHash = value; Save(); }
         }
+        private byte[] _PasswordHash;
 
         /// <summary>
         /// Gets the source filename of this account.
@@ -90,7 +90,7 @@ namespace Oddmatics.RozWorld.Formats
 
             Username = ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8);
             DisplayName = ByteParse.NextStringByLength(data, ref currentIndex, 1, Encoding.UTF8);
-            PasswordHash = data.GetRange(currentIndex, 32).ToArray();
+            _PasswordHash = data.GetRange(currentIndex, 32).ToArray();
             currentIndex += 32;
             CreationIP = ByteParse.NextIPv4Address(data, ref currentIndex);
             _LastLogInIP = ByteParse.NextIPv4Address(data, ref currentIndex);

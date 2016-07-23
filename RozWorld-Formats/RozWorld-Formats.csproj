@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="AccountFile.cs" />
     <Compile Include="PermissionGroupFile.cs" />
+    <Compile Include="PlayerPermissionFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

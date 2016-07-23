@@ -1,4 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿/**
+ * Oddmatics.RozWorld.Formats.PermissionGroupFile -- RozWorld Permission Group File
+ *
+ * This source-code is part of the file format I/O library for the RozWorld project by rozza of Oddmatics:
+ * <<http://www.oddmatics.uk>>
+ * <<http://roz.world>>
+ * <<http://github.com/rozniak/RozWorld-Formats>>
+ *
+ * Sharing, editing and general licence term information can be found inside of the "LICENCE.MD" file that should be located in the root of this project's directory structure.
+ */
+
+using Newtonsoft.Json;
 using Oddmatics.Util.IO;
 using System;
 using System.Collections.Generic;

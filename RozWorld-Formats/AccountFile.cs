@@ -144,7 +144,7 @@ namespace Oddmatics.RozWorld.Formats
         /// <summary>
         /// Updates the on-disk file of this AccountFile.
         /// </summary>
-        private void Save(string filename)
+        public void Save(string filename)
         {
             var fileData = new List<byte>();
 

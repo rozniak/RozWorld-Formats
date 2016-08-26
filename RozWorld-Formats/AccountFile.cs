@@ -61,7 +61,7 @@ namespace Oddmatics.RozWorld.Formats
         /// <summary>
         /// Gets the username of this account.
         /// </summary>
-        public string Username { get; private set; }
+        public string Username;
 
 
         /// <summary>

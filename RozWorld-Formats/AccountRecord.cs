@@ -20,9 +20,14 @@ namespace Oddmatics.RozWorld.Formats
     public sealed class AccountRecord
     {
         /// <summary>
-        /// The unique ID used for this record.
+        /// The date that this account was created.
         /// </summary>
-        public int Id;
+        public DateTime CreationDate;
+
+        /// <summary>
+        /// The IP address that created this account.
+        /// </summary>
+        public IPAddress CreationIP;
 
         /// <summary>
         /// The filename of the player data file associated with this account.
@@ -35,14 +40,9 @@ namespace Oddmatics.RozWorld.Formats
         public string DisplayName;
 
         /// <summary>
-        /// The date that this account was created.
+        /// The unique ID used for this record.
         /// </summary>
-        public DateTime CreationDate;
-
-        /// <summary>
-        /// The IP address that created this account.
-        /// </summary>
-        public IPAddress CreationIP;
+        public int Id;
 
         /// <summary>
         /// The SHA-256'd password hash of this account.

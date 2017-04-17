@@ -25,6 +25,11 @@ namespace Oddmatics.RozWorld.Formats
         public int Id;
 
         /// <summary>
+        /// The filename of the player data file associated with this account.
+        /// </summary>
+        public string DataFilename;
+
+        /// <summary>
         /// The display name of this account.
         /// </summary>
         public string DisplayName;
@@ -54,6 +59,11 @@ namespace Oddmatics.RozWorld.Formats
             }
         }
         private byte[] _PasswordHash;
+
+        /// <summary>
+        /// The filename of the permissions file associated with this account.
+        /// </summary>
+        public string PermissionsFilename;
 
         /// <summary>
         /// The username of this account.

@@ -20,7 +20,7 @@ using System.Text;
 namespace Oddmatics.RozWorld.Formats
 {
     /// <summary>
-    /// Represents a RozWorld user account file.
+    /// (Deprecated) Represents a RozWorld user account file.
     /// </summary>
     /// <remarks>
     /// The format for account files is:

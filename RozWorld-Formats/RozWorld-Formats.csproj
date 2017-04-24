@@ -48,8 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountFile.cs" />
-    <Compile Include="AccountRecord.cs" />
     <Compile Include="PermissionGroupFile.cs" />
     <Compile Include="PlayerPermissionFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
